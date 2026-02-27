@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Link from 'next/link'
+import Script from "next/script"
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID
 
 export const metadata: Metadata = {
   title: { default: '杉並パーキングめし | 駐車場確認済みレストラン', template: '%s | 杉並パーキングめし' },
@@ -33,6 +36,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <body className="bg-gray-50 text-gray-900 min-h-screen">
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}');
+              `}
+            </Script>
+          </>
+        )}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
             <div className="flex items-center h-14 gap-4">
