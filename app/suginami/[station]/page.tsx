@@ -84,7 +84,7 @@ export default async function StationPage({ params }: { params: Promise<{ statio
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <div className="text-sm text-gray-500 mb-6">
@@ -95,7 +95,7 @@ export default async function StationPage({ params }: { params: Promise<{ statio
         <span>{info.name}</span>
       </div>
 
-      <h1 className="text-2xl md:text-3xl font-black mb-3">{info.title}</h1>
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-black mb-3">{info.title}</h1>
       <p className="text-gray-600 mb-8">{info.desc}</p>
 
       <div className="flex gap-4 mb-8 text-sm">
@@ -113,7 +113,7 @@ export default async function StationPage({ params }: { params: Promise<{ statio
           <p>このエリアのデータを収集中です</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {publishedPlaces.map((place) => {
             const parking = place.parking_infos?.[0]
             if (!parking) return null
@@ -122,7 +122,7 @@ export default async function StationPage({ params }: { params: Promise<{ statio
               <Link
                 key={place.id}
                 href={`/p/${place.slug}`}
-                className="block bg-white border border-gray-200 hover:border-emerald-400 rounded-xl p-5 transition"
+                className="block bg-white border border-gray-200 hover:border-emerald-400 rounded-xl p-3 sm:p-5 transition"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
