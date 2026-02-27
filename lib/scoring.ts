@@ -54,21 +54,20 @@ export function getPublishStatus(score: number): 'publish' | 'needs_verification
 }
 
 export function getParkingBadge(status: VerificationStatus): {
-  emoji: string
   label: string
   color: string
 } {
   switch (status) {
     case 'phone_confirmed':
-      return { emoji: '🟢', label: '電話確認済み', color: 'bg-green-100 text-green-800' }
+      return { label: '電話確認済み', color: 'bg-emerald-50 text-emerald-700 border border-emerald-200' }
     case 'on_site_confirmed':
-      return { emoji: '🟢', label: '現地確認済み', color: 'bg-green-100 text-green-800' }
+      return { label: '現地確認済み', color: 'bg-emerald-50 text-emerald-700 border border-emerald-200' }
     case 'official_confirmed':
-      return { emoji: '🟡', label: '公式確認済み', color: 'bg-yellow-100 text-yellow-800' }
+      return { label: '公式確認済み', color: 'bg-blue-50 text-blue-700 border border-blue-200' }
     case 'ai_extracted':
-      return { emoji: '🔵', label: 'AI抽出', color: 'bg-blue-100 text-blue-800' }
+      return { label: 'AI推定', color: 'bg-gray-100 text-gray-600 border border-gray-200' }
     default:
-      return { emoji: '⚪', label: '未確認', color: 'bg-gray-100 text-gray-600' }
+      return { label: '未確認', color: 'bg-gray-100 text-gray-500 border border-gray-200' }
   }
 }
 

@@ -1,88 +1,101 @@
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
-import { getParkingBadge, getParkingTypeLabel } from '@/lib/scoring'
 
 export const revalidate = 3600
 
-const supabase = createClient(
+const sb = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-async function getTopPlaces() {
+const STATIONS = [
+  { slug: 'ogikubo', name: '荻窪', count: 13 },
+  { slug: 'asagaya', name: '阿佐ヶ谷', count: 11 },
+  { slug: 'nishiogikubo', name: '西荻窪', count: 9 },
+  { slug: 'koenji', name: '高円寺', count: 10 },
+]
+
+const VERIFICATION: Record<string, { label: string; color: string }> = {
+  phone_confirmed: { label: '電話確認済み', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  on_site_confirmed: { label: '現地確認済み', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  official_confirmed: { label: '公式確認済み', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  ai_extracted: { label: 'AI推定', color: 'bg-gray-100 text-gray-600 border-gray-200' },
+}
+
+async function getLatestPlaces() {
   try {
-    const { data } = await supabase
+    const { data } = await sb
       .from('places')
       .select('*, parking_infos(*)')
       .order('created_at', { ascending: false })
-      .limit(6)
+      .limit(8)
     return data || []
-  } catch { return [] }
+  } catch {
+    return []
+  }
 }
 
-const stations = [
-  { name: '荻窪', slug: 'ogikubo', emoji: '🍜' },
-  { name: '阿佐ヶ谷', slug: 'asagaya', emoji: '🥩' },
-  { name: '西荻窪', slug: 'nishiogikubo', emoji: '🍣' },
-  { name: '高円寺', slug: 'koenji', emoji: '🍺' },
-]
-
 export default async function HomePage() {
-  const places = await getTopPlaces()
+  const places = await getLatestPlaces()
 
   return (
-    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-5 sm:p-8 mb-6 sm:mb-10">
-        <h1 className="text-xl sm:text-3xl font-black text-gray-900 mb-2 leading-tight">
-          杉並区 駐車場付き<br className="sm:hidden" />レストラン
-          <span className="block sm:inline text-emerald-700 text-lg sm:text-3xl">【確認済み】</span>
+      <div className="mb-8 sm:mb-10">
+        <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2 leading-tight">
+          杉並区の駐車場付きレストラン<br />
+          <span className="text-emerald-700">確認済みガイド</span>
         </h1>
-        <p className="text-gray-600 text-sm sm:text-base mb-4">
-          電話確認・公式情報で厳選。「行ったら満車」を防ぐ。
+        <p className="text-gray-600 text-sm sm:text-base max-w-xl">
+          電話・公式サイトで確認した駐車場情報のみ掲載。「行ったら満車だった」を防ぎます。
         </p>
-        <div className="flex flex-wrap gap-2">
-          <span className="bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-xs font-medium">🟢 電話確認済み</span>
-          <span className="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full text-xs font-medium">🟡 公式確認済み</span>
-          <span className="bg-blue-100 text-blue-800 px-3 py-1.5 rounded-full text-xs font-medium">🔵 AI抽出</span>
-        </div>
       </div>
 
-      {/* Station Grid - 2x2 on SP */}
-      <section className="mb-6">
-        <h2 className="text-base sm:text-2xl font-bold mb-3">エリアから探す</h2>
+      {/* Verification legend */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {Object.entries(VERIFICATION).filter(([k]) => k !== 'on_site_confirmed').map(([key, v]) => (
+          <span key={key} className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border ${v.color}`}>
+            {v.label}
+          </span>
+        ))}
+      </div>
+
+      {/* Station cards */}
+      <section className="mb-10">
+        <h2 className="text-base font-bold text-gray-900 mb-3">エリアから探す</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {stations.map((s) => (
+          {STATIONS.map(s => (
             <Link key={s.slug} href={`/suginami/${s.slug}`}
-              className="bg-white border border-gray-200 hover:border-emerald-400 rounded-xl p-4 text-center transition active:bg-emerald-50 group">
-              <div className="text-3xl mb-1.5">{s.emoji}</div>
-              <div className="font-bold text-sm group-hover:text-emerald-700 transition">{s.name}</div>
+              className="bg-white border border-gray-200 hover:border-emerald-400 rounded-xl p-4 sm:p-5 transition group">
+              <p className="font-bold text-sm sm:text-base group-hover:text-emerald-700 transition">{s.name}</p>
+              <p className="text-xs text-gray-500 mt-1">{s.count}件掲載</p>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Recent Places */}
+      {/* Latest places */}
       {places.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-base sm:text-2xl font-bold mb-3">確認済みレストラン</h2>
-          <div className="space-y-2">
+        <section className="mb-10">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-bold text-gray-900">最近追加されたレストラン</h2>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
             {places.map((place: any) => {
-              const parking = place.parking_infos?.[0]
-              if (!parking) return null
-              const badge = getParkingBadge(parking.verification_status)
+              const p = place.parking_infos?.[0]
+              if (!p) return null
+              const v = VERIFICATION[p.verification_status] || VERIFICATION.ai_extracted
               return (
                 <Link key={place.id} href={`/p/${place.slug}`}
-                  className="flex items-center gap-3 bg-white border border-gray-200 hover:border-emerald-400 rounded-xl p-3 sm:p-4 transition">
+                  className="flex items-center gap-4 px-4 py-4 hover:bg-gray-50 transition">
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-sm truncate">{place.name}</div>
-                    <div className="text-xs text-gray-500 mt-0.5">{place.category_primary} · {place.nearest_station}</div>
+                    <p className="font-bold text-sm truncate">{place.name}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{place.category_primary} · {place.nearest_station}駅</p>
                   </div>
-                  <div className="text-right flex-shrink-0">
-                    <span className={`text-xs px-2 py-1 rounded-full ${badge.color} whitespace-nowrap`}>
-                      {badge.emoji} {badge.label}
+                  <div className="shrink-0 text-right">
+                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${v.color}`}>
+                      {v.label}
                     </span>
-                    <div className="text-xs text-gray-400 mt-1">{getParkingTypeLabel(parking.parking_type)}</div>
                   </div>
                 </Link>
               )
@@ -91,21 +104,18 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Why trust - 1col on SP */}
-      <section className="bg-gray-50 rounded-2xl p-4 sm:p-8">
-        <h2 className="text-base sm:text-xl font-bold mb-4 text-center">なぜ信頼できるのか</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
+      {/* Why trust section */}
+      <section className="bg-white border border-gray-200 rounded-xl p-5 sm:p-8">
+        <h2 className="text-base font-bold text-gray-900 mb-5">なぜ信頼できるのか</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-8">
           {[
-            { icon: '📞', title: '電話確認', desc: 'スタッフが直接電話で確認' },
-            { icon: '📋', title: '根拠開示', desc: '公式サイト引用・確認日を掲載' },
-            { icon: '🔄', title: '定期更新', desc: '1年後に自動で再確認' },
-          ].map((f) => (
-            <div key={f.title} className="flex sm:flex-col items-center sm:items-start sm:text-center gap-3 sm:gap-0">
-              <div className="text-2xl sm:text-3xl sm:mb-2 flex-shrink-0">{f.icon}</div>
-              <div>
-                <h3 className="font-bold text-sm">{f.title}</h3>
-                <p className="text-xs text-gray-600 sm:mt-1">{f.desc}</p>
-              </div>
+            { title: '電話での直接確認', desc: 'スタッフが実際に電話をかけ、駐車場の有無・台数・料金を確認しています。' },
+            { title: '公式情報の引用', desc: 'お店の公式サイト・SNSの情報を引用元URLとともに掲載しています。' },
+            { title: '確認日の記載', desc: 'いつ確認した情報かを全件掲載。古い情報を掲載し続けません。' },
+          ].map(f => (
+            <div key={f.title}>
+              <h3 className="font-bold text-sm mb-1.5">{f.title}</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
