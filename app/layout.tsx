@@ -4,7 +4,22 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: { default: '杉並パーキングめし | 駐車場確認済みレストラン', template: '%s | 杉並パーキングめし' },
-  description: '杉並区の駐車場付きレストランを電話・公式確認した情報を掲載。荻窪・阿佐ヶ谷・西荻窪・高円寺。',
+  description: '杉並区の駐車場付きレストランを電話・公式確認した情報を掲載。荻窪・阿佐ヶ谷・西荻窪・高円寺エリア対応。',
+  metadataBase: new URL('https://suginami-parking.vercel.app'),
+  openGraph: {
+    type: 'website',
+    locale: 'ja_JP',
+    url: 'https://suginami-parking.vercel.app',
+    siteName: '杉並パーキングめし',
+    title: '杉並パーキングめし | 駐車場確認済みレストラン',
+    description: '杉並区の駐車場付きレストランを電話・公式確認した情報を掲載。荻窪・阿佐ヶ谷・西荻窪・高円寺。',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: '杉並パーキングめし' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '杉並パーキングめし | 駐車場確認済みレストラン',
+    description: '杉並区の駐車場付きレストランを電話・公式確認した情報を掲載。',
+  },
 }
 
 const STATIONS = [
