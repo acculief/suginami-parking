@@ -1,12 +1,7 @@
 import Link from 'next/link'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin as sb } from '@/lib/supabase'
 
 export const revalidate = 3600
-
-const sb = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 const STATIONS = [
   { slug: 'ogikubo', name: '荻窪', count: 20 },

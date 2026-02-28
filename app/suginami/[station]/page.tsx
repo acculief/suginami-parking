@@ -1,14 +1,9 @@
 import Link from 'next/link'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin as sb } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
 export const revalidate = 3600
-
-const sb = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 const STATIONS: Record<string, { name: string; title: string; desc: string }> = {
   ogikubo: {

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin as supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import { getParkingBadge, getParkingTypeLabel } from '@/lib/scoring'
 import Link from 'next/link'
