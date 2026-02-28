@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { supabaseAdmin as sb } from '@/lib/supabase'
 
-export const revalidate = 3600
+export const revalidate = 0
 
 const STATIONS = [
   { slug: 'ogikubo', name: '荻窪', count: 20 },
@@ -19,6 +19,35 @@ const VERIFICATION: Record<string, { label: string; color: string }> = {
   ai_extracted: { label: 'AI推定', color: 'bg-gray-100 text-gray-600 border-gray-200' },
 }
 
+// カテゴリ別Unsplashフォールバック画像
+const CATEGORY_IMAGES: Record<string, string> = {
+  'ラーメン':       'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&h=240&fit=crop&q=80',
+  '寿司':           'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=400&h=240&fit=crop&q=80',
+  '回転寿司':       'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=400&h=240&fit=crop&q=80',
+  '焼肉':           'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=240&fit=crop&q=80',
+  '鉄板焼き':       'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=240&fit=crop&q=80',
+  '焼き鳥':         'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=240&fit=crop&q=80',
+  'イタリアン':     'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=240&fit=crop&q=80',
+  'パスタ':         'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=240&fit=crop&q=80',
+  'ピザ':           'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=240&fit=crop&q=80',
+  '喫茶':           'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=240&fit=crop&q=80',
+  'フレンチ':       'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=240&fit=crop&q=80',
+  'ファミレス':     'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=240&fit=crop&q=80',
+  'ファミリーレストラン': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=240&fit=crop&q=80',
+  '牛丼':           'https://images.unsplash.com/photo-1546069901-5ec6a79120b0?w=400&h=240&fit=crop&q=80',
+  '定食':           'https://images.unsplash.com/photo-1546069901-5ec6a79120b0?w=400&h=240&fit=crop&q=80',
+  '天丼':           'https://images.unsplash.com/photo-1546069901-5ec6a79120b0?w=400&h=240&fit=crop&q=80',
+  '天ぷら':         'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=400&h=240&fit=crop&q=80',
+  '中華':           'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&h=240&fit=crop&q=80',
+  '海鮮':           'https://images.unsplash.com/photo-1559408255-e1ee6e2f0467?w=400&h=240&fit=crop&q=80',
+  '居酒屋':         'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&h=240&fit=crop&q=80',
+  'ファストフード': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=240&fit=crop&q=80',
+  'ハンバーグ':     'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=240&fit=crop&q=80',
+  'レストラン':     'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=240&fit=crop&q=80',
+}
+
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=240&fit=crop&q=80'
+
 async function getLatestPlaces() {
   try {
     const { data } = await sb
@@ -34,6 +63,7 @@ async function getLatestPlaces() {
 
 export default async function HomePage() {
   const places = await getLatestPlaces()
+  const validPlaces = places.filter((p: any) => p.parking_infos)
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
@@ -71,28 +101,37 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Latest places */}
-      {places.length > 0 && (
+      {/* Latest places — card grid with images */}
+      {validPlaces.length > 0 && (
         <section className="mb-10">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-bold text-gray-900">最近追加されたレストラン</h2>
-          </div>
-          <div className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
-            {places.map((place: any) => {
-              const p = place.parking_infos
-              if (!p) return null
-              const v = VERIFICATION[p.verification_status] || VERIFICATION.ai_extracted
+          <h2 className="text-base font-bold text-gray-900 mb-4">最近追加されたレストラン</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            {validPlaces.map((place: any) => {
+              const pi = place.parking_infos
+              const v = VERIFICATION[pi?.verification_status] || VERIFICATION.ai_extracted
+              const imgSrc = place.image_url || CATEGORY_IMAGES[place.category_primary] || DEFAULT_IMAGE
               return (
                 <Link key={place.id} href={`/p/${place.slug}`}
-                  className="flex items-center gap-4 px-4 py-4 hover:bg-gray-50 transition">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-sm truncate">{place.name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{place.category_primary} · {place.nearest_station}駅</p>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${v.color}`}>
+                  className="bg-white border border-gray-200 hover:border-emerald-400 rounded-xl overflow-hidden transition group">
+                  {/* 店舗写真 */}
+                  <div className="relative w-full h-28 sm:h-32 bg-gray-100 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imgSrc}
+                      alt={place.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      loading="lazy"
+                    />
+                    <span className={`absolute top-2 right-2 text-xs font-medium px-2 py-0.5 rounded-full border backdrop-blur-sm ${v.color}`}>
                       {v.label}
                     </span>
+                  </div>
+                  {/* テキスト */}
+                  <div className="p-3">
+                    <p className="font-bold text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-emerald-700 transition">
+                      {place.name}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">{place.category_primary} · {place.nearest_station}駅</p>
                   </div>
                 </Link>
               )
