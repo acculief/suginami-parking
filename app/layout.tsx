@@ -30,6 +30,8 @@ const STATIONS = [
   { href: '/suginami/asagaya', label: '阿佐ヶ谷' },
   { href: '/suginami/nishiogikubo', label: '西荻窪' },
   { href: '/suginami/koenji', label: '高円寺' },
+  { href: '/suginami/hamadayama', label: '浜田山' },
+  { href: '/suginami/eifukucho', label: '永福町' },
 ]
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

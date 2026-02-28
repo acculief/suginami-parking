@@ -9,10 +9,12 @@ const sb = createClient(
 )
 
 const STATIONS = [
-  { slug: 'ogikubo', name: '荻窪', count: 13 },
-  { slug: 'asagaya', name: '阿佐ヶ谷', count: 11 },
+  { slug: 'ogikubo', name: '荻窪', count: 20 },
+  { slug: 'asagaya', name: '阿佐ヶ谷', count: 17 },
   { slug: 'nishiogikubo', name: '西荻窪', count: 9 },
-  { slug: 'koenji', name: '高円寺', count: 10 },
+  { slug: 'koenji', name: '高円寺', count: 21 },
+  { slug: 'hamadayama', name: '浜田山', count: 3 },
+  { slug: 'eifukucho', name: '永福町', count: 1 },
 ]
 
 const VERIFICATION: Record<string, { label: string; color: string }> = {

@@ -31,6 +31,16 @@ const STATIONS: Record<string, { name: string; title: string; desc: string }> = 
     title: '高円寺 駐車場付きレストラン【確認済み】',
     desc: '高円寺エリアの駐車場付きレストランを確認済み情報で紹介。',
   },
+  hamadayama: {
+    name: '浜田山',
+    title: '浜田山 駐車場付きレストラン【確認済み】',
+    desc: '浜田山エリアの駐車場付きレストランを確認済み情報で紹介。ファミリーにも便利な駐車場完備の飲食店。',
+  },
+  eifukucho: {
+    name: '永福町',
+    title: '永福町 駐車場付きレストラン【確認済み】',
+    desc: '永福町エリアの駐車場付きレストランを確認済み情報で紹介。',
+  },
 }
 
 const VERIFICATION: Record<string, { label: string; color: string }> = {
