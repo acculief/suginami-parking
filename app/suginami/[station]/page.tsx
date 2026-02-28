@@ -97,7 +97,7 @@ export default async function StationPage({ params }: { params: Promise<{ statio
       {/* Restaurant list */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden divide-y divide-gray-100">
         {places.map((place: any) => {
-          const p = place.parking_infos?.[0]
+          const p = place.parking_infos
           if (!p) return null
           const v = VERIFICATION[p.verification_status] || VERIFICATION.ai_extracted
           const pType = PARKING_TYPE[p.parking_type] || p.parking_type

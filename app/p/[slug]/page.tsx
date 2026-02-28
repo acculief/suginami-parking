@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const { data } = await supabase.from('places').select('*, parking_infos(*)').eq('slug', slug).single()
   if (!data) return {}
-  const parking = (data as PlaceWithParking).parking_infos?.[0]
+  const parking = (data as PlaceWithParking).parking_infos
   return {
     title: `${data.name} 駐車場情報【確認済み】| 杉並パーキングめし`,
     description: `${data.name}（${data.nearest_station}）の駐車場情報。${parking ? getParkingTypeLabel(parking.parking_type) + '・' + parking.spaces_count + '台' : ''}。確認済み情報のみ掲載。`,
@@ -37,7 +37,7 @@ export default async function PlacePage({ params }: { params: Promise<{ slug: st
   if (error || !data) notFound()
 
   const place = data as PlaceWithParking
-  const parking = place.parking_infos?.[0]
+  const parking = place.parking_infos
   const evidence = place.evidence_sources || []
   const badge = parking ? getParkingBadge(parking.verification_status) : null
 

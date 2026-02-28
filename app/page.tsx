@@ -79,7 +79,7 @@ export default async function HomePage() {
           </div>
           <div className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
             {places.map((place: any) => {
-              const p = place.parking_infos?.[0]
+              const p = place.parking_infos
               if (!p) return null
               const v = VERIFICATION[p.verification_status] || VERIFICATION.ai_extracted
               return (

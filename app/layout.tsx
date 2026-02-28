@@ -76,7 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="bg-white border-t border-gray-100 mt-12 py-8">
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
             <p className="text-xs text-gray-500">掲載情報は確認時点のものです。来店前に必ずご確認ください。</p>
-            <p className="text-xs text-gray-400 mt-1">© 2024 杉並パーキングめし</p>
+            <p className="text-xs text-gray-400 mt-1">© 2026 杉並パーキングめし</p>
           </div>
         </footer>
       </body>
