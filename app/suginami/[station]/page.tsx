@@ -84,8 +84,29 @@ export default async function StationPage({ params }: { params: Promise<{ statio
     places = data || []
   } catch {}
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'トップ',
+        item: 'https://suginami-parking.vercel.app/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: `${info.name}駅周辺の駐車場付きレストラン`,
+        item: `https://suginami-parking.vercel.app/suginami/${station}`,
+      },
+    ],
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-gray-500 mb-4">
         <Link href="/" className="hover:text-gray-700">トップ</Link>

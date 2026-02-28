@@ -1,8 +1,14 @@
 import Link from 'next/link'
 import { supabaseAdmin as sb } from '@/lib/supabase'
 import { PlaceImage } from './place-image'
+import type { Metadata } from 'next'
 
-export const revalidate = 0
+export const revalidate = 3600
+
+export const metadata: Metadata = {
+  title: '杉並パーキングめし｜駐車場ありの飲食店を駅別で探せる',
+  description: '杉並区の荻窪・阿佐ヶ谷・西荻窪・高円寺で駐車場（自走・提携）がある飲食店を厳選。ファミリーや車移動でのランチ・ディナーに。',
+}
 
 const STATIONS = [
   { slug: 'ogikubo', name: '荻窪', count: 20 },

@@ -49,18 +49,15 @@ export default async function PlacePage({ params }: { params: Promise<{ slug: st
     name: place.name,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: place.address,
+      streetAddress: place.address || '',
       addressLocality: '杉並区',
       addressRegion: '東京都',
       addressCountry: 'JP',
     },
-    telephone: place.phone,
-    url: place.website_url,
-    geo: place.lat && place.lng ? {
-      '@type': 'GeoCoordinates',
-      latitude: place.lat,
-      longitude: place.lng,
-    } : undefined,
+    ...(place.lat && place.lng ? { geo: { '@type': 'GeoCoordinates', latitude: place.lat, longitude: place.lng } } : {}),
+    ...(place.phone ? { telephone: place.phone } : {}),
+    ...(place.website_url ? { url: place.website_url } : {}),
+    amenityFeature: [{ '@type': 'LocationFeatureSpecification', name: '駐車場', value: true }],
   }
 
   return (
