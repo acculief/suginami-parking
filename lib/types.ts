@@ -74,6 +74,6 @@ export interface ReviewPage {
 }
 
 export interface PlaceWithParking extends Place {
-  parking_infos: ParkingInfo[]
+  parking_infos: ParkingInfo | null
   evidence_sources: EvidenceSource[]
 }
