@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: { default: '杉並パーキングめし | 駐車場確認済みレストラン', template: '%s | 杉並パーキングめし' },
   description: '杉並区の駐車場付きレストランを電話・公式確認した情報を掲載。荻窪・阿佐ヶ谷・西荻窪・高円寺エリア対応。',
   metadataBase: new URL('https://suginami-parking.vercel.app'),
+  verification: { google: '0uJTSoLifNf9F30GBAdAstHG5n6Ci6kGC29csJZbdRM' },
   openGraph: {
     type: 'website',
     locale: 'ja_JP',
